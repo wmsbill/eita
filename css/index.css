@@ -1,0 +1,30 @@
+html, body {
+  font-size: 100%;
+}
+
+main {
+  width: 100vw;
+  height: 100vh;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+section.card {
+  width: min-content;
+  min-width: 50%
+}
+
+.card-content {
+  text-align: center;
+}
+
+.card-action {
+  display: flex;
+  justify-content: space-around;
+}
+
+.card-action button {
+  margin: 0 1rem;
+}
