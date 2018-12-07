@@ -1,5 +1,6 @@
 import Button from './button.js';
 import Counter from './counter.js';
+import getStore from './eitajs/index.js';
 
 const state = {
   value: 0,
