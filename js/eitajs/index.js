@@ -10,25 +10,30 @@ const mutate = (functionList, entryIterable) => async function* () {
   }
 }();
 
-const notifyAll = async (handlers, entryIterable) => {
+const notifyAll = (handlers, entryIterable) => async function* () {
   for await (const item of entryIterable) {
     handlers.forEach(fn => fn(item));
   }
-};
+}();
 
 export default (defaultState = {}) => {
+  let state = defaultState;
   const listeners = new Set();
-  const state = defaultState;
   const mutationList = [];
 
   const dispatch = async (action) => {
-    if(listeners.size) {
-      await pipe(
-        signal(action),
-        mutate.bind(null, mutationList),
-        notifyAll.bind(null, listeners)
-      );
+    const nextStateIterable = await pipe(
+      signal(action),
+      mutate.bind(null, mutationList),
+      notifyAll.bind(null, listeners),
+    );
+
+    if (listeners.size) {
+      const { value } = await nextStateIterable.next();
+      state = value;
     }
+
+    return state;
   };
 
   const subscribe = handler => {
