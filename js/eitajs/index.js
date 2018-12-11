@@ -14,7 +14,7 @@ const mutate = (mutationList, signal) => function* () {
 
 const notifyAll = (handlers, signal) => function* () {
   for (const [state, pulse] of signal) {
-    handlers.forEach(fn => fn(pulse, state));
+    handlers.forEach(fn => fn(state));
 
     yield [state, pulse];
   }

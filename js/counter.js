@@ -2,8 +2,8 @@ export default selector => {
   const elm = document.querySelector(selector);
 
   return {
-    render(counter) {
-      elm.innerText = counter;
+    render({value}) {
+      elm.innerText = value;
     }
   }
 }
