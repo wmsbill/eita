@@ -5,11 +5,22 @@ import getStore from './eitajs/index.js';
 const store = getStore({value: 0});
 const counter = Counter('.counter');
 
-store.addMutation((pulse, {value}) => ({
-  value: pulse === 'plus'
+store.addMutation((signal, {value}) => ({
+  value: signal === 'plus'
     ? value + 1
     : value - 1
 }));
+
+store.addPreMutation((signal, {value}) => {
+  if (
+    (signal === 'plus' && value === 10) ||
+    (signal === 'minus' && value === 0)
+  ) {
+    return 'kill';
+  }
+
+  return signal;
+});
 
 store.subscribe(counter.render);
 
