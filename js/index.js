@@ -1,16 +1,33 @@
 import Button from './button.js';
 import Counter from './counter.js';
+import getStore from './eitajs/index.js';
 
-const state = {
-  value: 0,
-};
-
+const store = getStore({value: 0});
 const counter = Counter('.counter');
+
+store.addMutation((signal, {value}) => ({
+  value: signal === 'plus'
+    ? value + 1
+    : value - 1
+}));
+
+store.addPreMutation((signal, {value}) => {
+  if (
+    (signal === 'plus' && value === 10) ||
+    (signal === 'minus' && value === 0)
+  ) {
+    return 'kill';
+  }
+
+  return signal;
+});
+
+store.subscribe(counter.render);
 
 Button('.plus', {
   events: {
     click() {
-      counter.render(++state.value);
+      store.dispatch('plus');
     }
   },
 });
@@ -18,7 +35,7 @@ Button('.plus', {
 Button('.minus', {
   events: {
     click() {
-      counter.render(--state.value);
+      store.dispatch('minus');
     }
   },
 });
