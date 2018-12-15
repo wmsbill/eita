@@ -18,8 +18,6 @@ store.addPreMutation((signal, {value}) => {
   ) {
     return 'kill';
   }
-
-  return signal;
 });
 
 store.subscribe(counter.render);
