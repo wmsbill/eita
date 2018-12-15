@@ -12,8 +12,9 @@ const preMutationHook = (dispatch, hooks, pulse) => function* () {
 
     for (const hook of hooks.values()) {
       newSignal = hook(signal, state, dispatch);
+      newSignal = newSignal === undefined ? signal : newSignal;
 
-      if (newSignal === KILL) {
+      if (newSignal !== signal) {
         break;
       }
     }
@@ -37,7 +38,7 @@ const mutate = (mutationList, pulse) => function* () {
 
 const notifyAll = (handlers, pulse) => function* () {
   for (const [signal, state] of pulse) {
-    handlers.forEach(fn => fn(state, signal));
+    handlers.forEach(fn => fn(state));
 
     yield [signal, state];
   }
@@ -71,16 +72,25 @@ export default (defaultState = {}) => {
     }
   };
 
-  const getState = () => ({ ...state });
+  const addMutation = fn => {
+    mutationList.add(fn);
 
-  const addMutation = fn => void mutationList.add(fn);
+    return () => {
+      mutationList.delete(fn);
+    }
+  };
 
-  const addPreMutation = fn => void preMutationList.add(fn);
+  const addPreMutation = fn => {
+    preMutationList.add(fn);
+
+    return () => {
+      preMutationList.delete(fn);
+    }
+  };
 
   return {
     dispatch,
     subscribe,
-    getState,
     addMutation,
     addPreMutation,
   };
